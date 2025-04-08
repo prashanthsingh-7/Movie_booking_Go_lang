@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Tickets - {{.Movie.Title}} - CineBook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary: #f84464;
+            --secondary: #222;
+            --background: #0f0f0f;
+            --text: #fff;
+            --text-secondary: #aaa;
+            --card-bg: #222;
+            --card-hover: #2a2a2a;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: rgba(17, 17, 17, 0.95);
+            padding: 15px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo::before {
+            content: "";
+            display: inline-block;
+            width: 10px;
+            height: 24px;
+            background: var(--primary);
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            opacity: 0.8;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+
+        .movie-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 30px;
+        }
+
+        .movie-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                rgba(248, 68, 100, 0.7) 0%, 
+                rgba(248, 68, 100, 0.1) 100%);
+        }
+
+        .movie-poster {
+            width: 120px;
+            height: 180px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .movie-poster:hover {
+            transform: translateY(-5px);
+        }
+
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .no-poster {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #222;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .movie-info h1 {
+            font-size: 28px;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .movie-meta {
+            color: var(--text-secondary);
+            font-size: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .movie-meta > div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rating {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 12px;
+            border-radius: 50px;
+        }
+
+        .rating-star {
+            color: gold;
+        }
+
+        .booking-section {
+            background: rgba(34, 34, 34, 0.5);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .booking-section:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--text);
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .date-picker {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--card-bg);
+        }
+
+        .date-picker::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .date-picker::-webkit-scrollbar-track {
+            background: var(--card-bg);
+            border-radius: 10px;
+        }
+
+        .date-picker::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .date-option {
+            min-width: 90px;
+            padding: 15px;
+            border-radius: 16px;
+            background: var(--card-bg);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .date-option:hover {
+            background: var(--card-hover);
+            transform: translateY(-3px);
+        }
+
+        .date-option.selected {
+            background: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(248, 68, 100, 0.3);
+        }
+
+        .date-option .day {
+            font-size: 14px;
+            margin-bottom: 6px;
+            opacity: 0.7;
+        }
+
+        .date-option .date {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .showtimes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .showtime {
+            padding: 20px;
+            border-radius: 16px;
+            background: var(--card-bg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .showtime:hover {
+            background: var(--card-hover);
+            transform: translateY(-5px);
+        }
+
+        .showtime.selected {
+            background: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(248, 68, 100, 0.3);
+        }
+
+        .showtime::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .showtime:hover::before {
+            opacity: 1;
+        }
+
+        .showtime.selected::before {
+            opacity: 0;
+        }
+
+        .time {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .venue {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .price {
+            margin-top: 12px;
+            font-size: 15px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .format-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .format-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            background: rgba(255,255,255,0.1);
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .showtime:hover .format-badge {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .showtime.selected .format-badge {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .booking-summary {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 17, 17, 0.95);
+            padding: 20px;
+            display: none;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .booking-summary.visible {
+            display: block;
+            animation: slideUp 0.3s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .summary-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .selected-info {
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .selected-info strong {
+            color: var(--primary);
+        }
+
+        .proceed-button {
+            padding: 14px 36px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(248, 68, 100, 0.3);
+        }
+
+        .proceed-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(248, 68, 100, 0.4);
+        }
+
+        .proceed-button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding-top: 80px;
+            }
+            
+            .movie-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .movie-info h1 {
+                font-size: 24px;
+            }
+            
+            .summary-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .proceed-button {
+                width: 100%;
+            }
+            
+            .date-option {
+                min-width: 80px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="/" class="logo">CineBook</a>
+            <div class="nav-links">
+                <a href="/movies">Movies</a>
+                <a href="/bookings">My Bookings</a>
+                <a href="/admin">Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="movie-header">
+            <div class="movie-poster">
+                {{if .Movie.PosterURL.Valid}}
+                <img src="{{.Movie.PosterURL.String}}" alt="{{.Movie.Title}}">
+                {{else}}
+                <div class="no-poster">No Poster</div>
+                {{end}}
+            </div>
+            <div class="movie-info">
+                <h1>{{.Movie.Title}}</h1>
+                <div class="movie-meta">
+                    <div class="rating">
+                        <span class="rating-star">★</span>
+                        <span>{{.Movie.Rating}}</span>
+                    </div>
+                    <div>{{.Movie.Duration}} mins</div>
+                    {{if .Movie.ReleaseDate.Valid}}
+                    <div>{{.Movie.ReleaseDate.Time.Format "2 Jan, 2006"}}</div>
+                    {{end}}
+                    {{if .Movie.Genre}}
+                    <div>{{.Movie.Genre}}</div>
+                    {{end}}
+                </div>
+            </div>
+        </div>
+
+        <div class="booking-section">
+            <h2 class="section-title">Select Date</h2>
+            <div class="date-picker">
+                {{range .Dates}}
+                <div class="date-option" data-date="{{.Format "2006-01-02"}}">
+                    <div class="day">{{.Format "Mon"}}</div>
+                    <div class="date">{{.Format "02"}}</div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+
+        <div class="booking-section">
+            <h2 class="section-title">Select Showtime</h2>
+            <div class="showtimes">
+                {{range .Showtimes}}
+                <div class="showtime" data-id="{{.ID}}">
+                    <div class="time">{{.Time.Format "3:04 PM"}}</div>
+                    <div class="venue">{{.Theater}} - {{.Screen}}</div>
+                    <div class="price">Starting from ₹{{.Price}}</div>
+                    <div class="format-badges">
+                        {{range .Formats}}
+                        <span class="format-badge">{{.}}</span>
+                        {{end}}
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+    </div>
+
+    <div class="booking-summary">
+        <div class="summary-content">
+            <div class="selected-info">
+                <div><strong>{{.Movie.Title}}</strong></div>
+                <div>Selected: <span id="selected-date">Not selected</span> | <span id="selected-time">Not selected</span></div>
+                <div><span id="selected-venue">Select a showtime</span></div>
+            </div>
+            <a id="proceed-link" href="#">
+                <button class="proceed-button" disabled>Proceed</button>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateOptions = document.querySelectorAll('.date-option');
+            const showtimes = document.querySelectorAll('.showtime');
+            const summary = document.querySelector('.booking-summary');
+            const proceedBtn = document.querySelector('.proceed-button');
+            const proceedLink = document.getElementById('proceed-link');
+            const selectedDate = document.getElementById('selected-date');
+            const selectedTime = document.getElementById('selected-time');
+            const selectedVenue = document.getElementById('selected-venue');
+            
+            let selectedShowtimeId = null;
+            
+            // Select first date by default
+            if (dateOptions.length > 0) {
+                dateOptions[0].classList.add('selected');
+                const defaultDate = dateOptions[0].getAttribute('data-date');
+                selectedDate.textContent = new Date(defaultDate).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                
+                // Filter showtimes for the selected date
+                filterShowtimes(defaultDate);
+            }
+            
+            dateOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove selected class from all date options
+                    dateOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Add selected class to clicked date option
+                    this.classList.add('selected');
+                    
+                    // Update selected date in summary
+                    const date = this.getAttribute('data-date');
+                    selectedDate.textContent = new Date(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                    
+                    // Filter showtimes for the selected date
+                    filterShowtimes(date);
+                    
+                    // Reset showtime selection
+                    resetShowtimeSelection();
+                });
+            });
+            
+            function filterShowtimes(date) {
+                // Implementation of filter logic would depend on how your data is structured
+                // For now, we'll just show all showtimes
+                console.log('Filter showtimes for date:', date);
+            }
+            
+            function resetShowtimeSelection() {
+                selectedShowtimeId = null;
+                selectedTime.textContent = 'Not selected';
+                selectedVenue.textContent = 'Select a showtime';
+                showtimes.forEach(s => s.classList.remove('selected'));
+                proceedBtn.disabled = true;
+                summary.classList.remove('visible');
+            }
+            
+            showtimes.forEach(showtime => {
+                showtime.addEventListener('click', function() {
+                    // Remove selected class from all showtimes
+                    showtimes.forEach(s => s.classList.remove('selected'));
+                    
+                    // Add selected class to clicked showtime
+                    this.classList.add('selected');
+                    
+                    // Get showtime ID
+                    selectedShowtimeId = this.getAttribute('data-id');
+                    
+                    // Update selected time and venue in summary
+                    selectedTime.textContent = this.querySelector('.time').textContent;
+                    selectedVenue.textContent = this.querySelector('.venue').textContent;
+                    
+                    // Update proceed link
+                    proceedLink.setAttribute('href', `/booking/seats?showtime=${selectedShowtimeId}`);
+                    
+                    // Enable proceed button
+                    proceedBtn.disabled = false;
+                    
+                    // Show booking summary
+                    summary.classList.add('visible');
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

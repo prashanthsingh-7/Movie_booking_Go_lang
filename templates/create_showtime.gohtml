@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Showtime</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+        .btn-primary {
+            color: #fff;
+            background-color: #337ab7;
+            border-color: #2e6da4;
+        }
+        .btn-default {
+            color: #333;
+            background-color: #fff;
+            border-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Add New Showtime</h1>
+    
+    <form action="/showtime/insert" method="post">
+        <div class="form-group">
+            <label for="movie_id">Movie:</label>
+            <select id="movie_id" name="movie_id" required>
+                {{range .}}
+                <option value="{{.ID}}">{{.Title}}</option>
+                {{end}}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="date_time">Date & Time:</label>
+            <input type="datetime-local" id="date_time" name="date_time" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="hall">Hall:</label>
+            <input type="text" id="hall" name="hall" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" min="0" step="0.01" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="available">Available Seats:</label>
+            <input type="number" id="available" name="available" min="1" required>
+        </div>
+        
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a href="/showtimes" class="btn btn-default">Cancel</a>
+        </div>
+    </form>
+</body>
+</html> 

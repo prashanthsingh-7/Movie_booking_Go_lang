@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Seats - {{.Showtime.Movie.Title}} - CineBook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+
+        .navbar {
+            background: #333;
+            padding: 12px 0;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .booking-header {
+            margin-bottom: 32px;
+        }
+
+        .movie-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .showtime-info {
+            display: flex;
+            gap: 24px;
+            font-size: 16px;
+            color: #ccc;
+        }
+
+        .theater-section {
+            margin-bottom: 40px;
+        }
+
+        .screen-container {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .screen {
+            height: 10px;
+            background: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.8), rgba(255,255,255,0.1));
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            max-width: 600px;
+        }
+
+        .screen-label {
+            color: #999;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .seat-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .seat-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .row-label {
+            width: 24px;
+            text-align: center;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .seat {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px 6px 0 0;
+            background-color: #444;
+            border: 1px solid #555;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .seat:hover {
+            background-color: #555;
+        }
+
+        .seat.selected {
+            background-color: #f84464;
+            border-color: #f84464;
+        }
+
+        .seat.booked {
+            background-color: #333;
+            border-color: #444;
+            cursor: not-allowed;
+        }
+
+        .seat.vip {
+            background-color: #4e7baa;
+            border-color: #4e7baa;
+        }
+
+        .seat.vip.selected {
+            background-color: #f84464;
+            border-color: #f84464;
+        }
+
+        .seat-number {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+            color: rgba(255,255,255,0.6);
+            height: 100%;
+        }
+
+        .platinum-section, .gold-section, .silver-section {
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-label {
+            display: inline-block;
+            padding: 4px 16px;
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .price-label {
+            position: absolute;
+            right: 0;
+            top: 0;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .booking-summary {
+            background-color: #222;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 40px;
+        }
+
+        .summary-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .summary-label {
+            color: #999;
+        }
+
+        .seats-selected {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .seat-tag {
+            padding: 4px 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .total-row {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-back {
+            background-color: transparent;
+            color: #ccc;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn-back:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        .btn-continue {
+            background-color: #f84464;
+            color: white;
+        }
+
+        .btn-continue:hover {
+            background-color: #e03e5c;
+        }
+
+        .btn-continue:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .legend-available {
+            background-color: #444;
+            border: 1px solid #555;
+        }
+
+        .legend-selected {
+            background-color: #f84464;
+            border: 1px solid #f84464;
+        }
+
+        .legend-taken {
+            background-color: #333;
+            border: 1px solid #444;
+        }
+
+        .legend-vip {
+            background-color: #4e7baa;
+            border: 1px solid #4e7baa;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="/" class="logo">CineBook</a>
+            <div class="nav-links">
+                <a href="/movies">Movies</a>
+                <a href="/showtimes">Showtimes</a>
+                <a href="/cinemas">Cinemas</a>
+                <a href="/bookings">My Bookings</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="booking-header">
+            <h1 class="movie-title">{{.Showtime.Movie.Title}}</h1>
+            <div class="showtime-info">
+                <div>{{.Showtime.DateTime.Format "Mon, 2 Jan 2006"}}</div>
+                <div>{{.Showtime.DateTime.Format "3:04 PM"}}</div>
+                <div>{{.Showtime.Hall}} | {{.Showtime.Format}}</div>
+            </div>
+        </div>
+
+        <div class="theater-section">
+            <div class="screen-container">
+                <div class="screen"></div>
+                <div class="screen-label">Screen</div>
+            </div>
+
+            <form id="seatsForm" action="/booking/payment" method="POST">
+                <input type="hidden" name="showtime_id" value="{{.Showtime.ID}}">
+                <input type="hidden" id="selectedSeatsInput" name="selected_seats" value="">
+                <input type="hidden" id="totalAmountInput" name="total_amount" value="0">
+                <input type="hidden" id="totalPriceInput" name="total_price" value="0">
+
+                <div class="platinum-section">
+                    <div class="section-label">Platinum - Rs. 350</div>
+                    <div class="price-label">Rs. 350</div>
+                    <div class="seat-layout">
+                        {{range $rowIndex, $row := .PlatinumRows}}
+                        <div class="seat-row">
+                            <div class="row-label">{{index $.RowLabels $rowIndex}}</div>
+                            {{range $seatIndex, $seatNum := $row}}
+                            <div class="seat vip {{if isSeatBooked $seatNum $.Showtime.Seats}}booked{{end}}" 
+                                 data-seat="{{$seatNum}}" data-price="350" data-row="{{index $.RowLabels $rowIndex}}" data-number="{{$seatIndex}}">
+                                <div class="seat-number">{{$seatIndex}}</div>
+                            </div>
+                            {{end}}
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+
+                <div class="gold-section">
+                    <div class="section-label">Gold - Rs. 295</div>
+                    <div class="price-label">Rs. 295</div>
+                    <div class="seat-layout">
+                        {{range $rowIndex, $row := .GoldRows}}
+                        <div class="seat-row">
+                            <div class="row-label">{{index $.RowLabels (add $rowIndex (len $.PlatinumRows))}}</div>
+                            {{range $seatIndex, $seatNum := $row}}
+                            <div class="seat {{if isSeatBooked $seatNum $.Showtime.Seats}}booked{{end}}" 
+                                 data-seat="{{$seatNum}}" data-price="295" data-row="{{index $.RowLabels (add $rowIndex (len $.PlatinumRows))}}" data-number="{{$seatIndex}}">
+                                <div class="seat-number">{{$seatIndex}}</div>
+                            </div>
+                            {{end}}
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+
+                <div class="booking-summary">
+                    <h2 class="summary-title">Booking Summary</h2>
+                    <div class="summary-row">
+                        <span class="summary-label">Movie:</span>
+                        <span>{{.Showtime.Movie.Title}} ({{.Showtime.Format}})</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">When:</span>
+                        <span>{{.Showtime.DateTime.Format "Mon, 2 Jan 2006"}} at {{.Showtime.DateTime.Format "3:04 PM"}}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Where:</span>
+                        <span>{{.Showtime.Hall}}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Seats:</span>
+                        <div class="seats-selected" id="selectedSeatsDisplay">
+                            <span class="seat-tag">Select seats above</span>
+                        </div>
+                    </div>
+                    <div class="summary-row total-row">
+                        <span class="summary-label">Total Amount:</span>
+                        <span id="totalAmount">Rs. 0</span>
+                    </div>
+
+                    <div class="action-buttons">
+                        <a href="/movie/{{.Showtime.MovieID}}" class="btn btn-back">Back</a>
+                        <button type="submit" class="btn btn-continue" id="continueBtn" disabled>Proceed to Payment</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color legend-available"></div>
+                <span>Available</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-selected"></div>
+                <span>Selected</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-taken"></div>
+                <span>Sold</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color legend-vip"></div>
+                <span>Premium</span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const seats = document.querySelectorAll('.seat:not(.booked)');
+            const selectedSeatsInput = document.getElementById('selectedSeatsInput');
+            const totalPriceInput = document.getElementById('totalPriceInput');
+            const selectedSeatsDisplay = document.getElementById('selectedSeatsDisplay');
+            const totalAmount = document.getElementById('totalAmount');
+            const continueBtn = document.getElementById('continueBtn');
+            
+            let selectedSeats = [];
+            let totalPrice = 0;
+            
+            seats.forEach(seat => {
+                seat.addEventListener('click', () => {
+                    const seatNumber = parseInt(seat.dataset.seat);
+                    const price = parseInt(seat.dataset.price);
+                    const row = seat.dataset.row;
+                    const num = seat.dataset.number;
+                    const seatLabel = `${row}${num}`;
+                    
+                    if (seat.classList.contains('selected')) {
+                        // Deselect seat
+                        seat.classList.remove('selected');
+                        selectedSeats = selectedSeats.filter(s => s !== seatNumber);
+                        totalPrice -= price;
+                    } else {
+                        // Select seat
+                        seat.classList.add('selected');
+                        selectedSeats.push(seatNumber);
+                        totalPrice += price;
+                    }
+                    
+                    // Update form inputs
+                    selectedSeatsInput.value = selectedSeats.join(',');
+                    totalPriceInput.value = totalPrice;
+                    totalAmountInput.value = totalPrice;
+                    
+                    // Update display
+                    updateSummary();
+                });
+            });
+            
+            function updateSummary() {
+                if (selectedSeats.length === 0) {
+                    selectedSeatsDisplay.innerHTML = '<span class="seat-tag">Select seats above</span>';
+                    totalAmount.textContent = 'Rs. 0';
+                    continueBtn.disabled = true;
+                } else {
+                    let seatLabels = [];
+                    seats.forEach(seat => {
+                        if (seat.classList.contains('selected')) {
+                            const row = seat.dataset.row;
+                            const num = seat.dataset.number;
+                            seatLabels.push(`${row}${num}`);
+                        }
+                    });
+                    
+                    selectedSeatsDisplay.innerHTML = seatLabels.map(label => 
+                        `<span class="seat-tag">${label}</span>`).join('');
+                    totalAmount.textContent = `Rs. ${totalPrice}`;
+                    continueBtn.disabled = false;
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

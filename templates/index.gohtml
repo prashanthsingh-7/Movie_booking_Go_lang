@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineBook - Book Movie Tickets Online</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary: #f84464;
+            --secondary: #222;
+            --background: #0f0f0f;
+            --text: #fff;
+            --text-secondary: #aaa;
+            --card-bg: #222;
+            --card-hover: #2a2a2a;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: rgba(17, 17, 17, 0.95);
+            padding: 15px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo::before {
+            content: "";
+            display: inline-block;
+            width: 10px;
+            height: 24px;
+            background: var(--primary);
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            opacity: 0.8;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hero {
+            height: 80vh;
+            background-size: cover;
+            background-position: center;
+            background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            margin-bottom: 40px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 12px 32px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(248, 68, 100, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(248, 68, 100, 0.4);
+        }
+
+        .section {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .movie-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transform: translateY(0);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .movie-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            background: var(--card-hover);
+        }
+
+        .movie-poster {
+            height: 320px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .movie-card:hover .movie-poster img {
+            transform: scale(1.05);
+        }
+
+        .movie-poster::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(to top, rgba(34, 34, 34, 1), rgba(34, 34, 34, 0));
+        }
+
+        .movie-details {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .movie-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .movie-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 10px;
+        }
+
+        .rating-star {
+            color: gold;
+        }
+
+        .book-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            margin-top: auto;
+            transition: all 0.2s ease;
+        }
+
+        .book-button:hover {
+            background: #e03e5c;
+        }
+
+        .view-all {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            padding: 12px 30px;
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--primary);
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            max-width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .view-all:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .upcoming-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            z-index: 10;
+        }
+
+        .no-poster {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            background: #333;
+            color: #666;
+            font-weight: 500;
+        }
+
+        footer {
+            background: #111;
+            padding: 60px 0 30px;
+            margin-top: 80px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            padding: 0 20px;
+        }
+
+        .footer-section h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 40px;
+            border-top: 1px solid #333;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 20px;
+            }
+            
+            .movie-poster {
+                height: 240px;
+            }
+            
+            .movie-title {
+                font-size: 16px;
+            }
+            
+            .section-title {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links {
+                gap: 20px;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 24px;
+            }
+            
+            .nav-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="/" class="logo">CineBook</a>
+            <div class="nav-links">
+                <a href="/movies">Movies</a>
+                <a href="/bookings">My Bookings</a>
+                <a href="/admin">Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Experience Movies Like Never Before</h1>
+            <p>Book your tickets for the latest blockbusters and immerse yourself in the magic of cinema</p>
+            <a href="/movies" class="cta-button">Explore Movies</a>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Now Showing</h2>
+        <div class="movie-grid">
+            {{range .Movies}}
+            <div class="movie-card">
+                <div class="movie-poster">
+                    {{if .PosterURL.Valid}}
+                    <img src="{{.PosterURL.String}}" alt="{{.Title}}">
+                    {{else}}
+                    <div class="no-poster">No Poster</div>
+                    {{end}}
+                </div>
+                <div class="movie-details">
+                    <h3 class="movie-title">{{.Title}}</h3>
+                    <div class="movie-meta">
+                        <span>{{.Duration}} min</span>
+                        {{if .Genre}}<span>• {{.Genre}}</span>{{end}}
+                    </div>
+                    <div class="rating">
+                        <span class="rating-star">★</span>
+                        <span>{{.Rating}}</span>
+                    </div>
+                    <a href="/movie/{{.ID}}" class="book-button">Book Now</a>
+                </div>
+            </div>
+            {{end}}
+        </div>
+        <a href="/movies" class="view-all">View All</a>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">Coming Soon</h2>
+        <div class="movie-grid">
+            {{range .UpcomingMovies}}
+            <div class="movie-card">
+                <span class="upcoming-badge">Coming Soon</span>
+                <div class="movie-poster">
+                    {{if .PosterURL.Valid}}
+                    <img src="{{.PosterURL.String}}" alt="{{.Title}}">
+                    {{else}}
+                    <div class="no-poster">No Poster</div>
+                    {{end}}
+                </div>
+                <div class="movie-details">
+                    <h3 class="movie-title">{{.Title}}</h3>
+                    <div class="movie-meta">
+                        <span>{{.Duration}} min</span>
+                        {{if .Genre}}<span>• {{.Genre}}</span>{{end}}
+                    </div>
+                    {{if .ReleaseDate.Valid}}
+                    <div class="movie-meta">
+                        <span>Coming on {{.ReleaseDate.Time.Format "Jan 2"}}</span>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>CineBook</h3>
+                <p style="color: #aaa; margin-bottom: 20px;">Your one-stop destination for movie tickets booking with the best experience.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/movies">Movies</a></li>
+                    <li><a href="/bookings">My Bookings</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">FAQs</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 CineBook. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html> 

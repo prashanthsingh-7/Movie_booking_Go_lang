@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Showtime - CineBook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: #fff;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: #333;
+            padding: 12px 0;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 500;
+        }
+
+        .form-card {
+            background: #222;
+            border-radius: 12px;
+            padding: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 6px;
+            background: #333;
+            border: 1px solid #555;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #f84464;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 16px;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary {
+            background: #f84464;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #e03e5c;
+        }
+
+        .btn-secondary {
+            background: #666;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #555;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 16px;
+            margin-top: 32px;
+        }
+        
+        .error-message {
+            color: #f84464;
+            margin-top: 24px;
+            padding: 12px;
+            background: rgba(248, 68, 100, 0.1);
+            border-radius: 6px;
+        }
+        
+        .success-message {
+            color: #4CAF50;
+            margin-top: 24px;
+            padding: 12px;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 6px;
+        }
+        
+        .movie-card {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .movie-poster {
+            width: 60px;
+            height: 90px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .movie-details h3 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        
+        .movie-meta {
+            font-size: 12px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="/" class="logo">CineBook</a>
+            <div class="nav-links">
+                <a href="/movies">Movies</a>
+                <a href="/showtimes">Showtimes</a>
+                <a href="/bookings">Bookings</a>
+                <a href="/admin">Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Add New Showtime</h1>
+        </div>
+
+        {{if .Error}}
+        <div class="error-message">{{.Error}}</div>
+        {{end}}
+        
+        {{if .Success}}
+        <div class="success-message">{{.Success}}</div>
+        {{end}}
+
+        <div class="form-card">
+            <form action="/admin/showtime/add" method="POST">
+                <div class="form-group">
+                    <label class="form-label" for="movie_id">Select Movie *</label>
+                    <select id="movie_id" name="movie_id" class="form-select" required>
+                        <option value="">-- Select a movie --</option>
+                        {{range .Movies}}
+                        <option value="{{.ID}}">{{.Title}}</option>
+                        {{end}}
+                    </select>
+                </div>
+                
+                <div id="movieDetails" class="movie-card" style="display: none;">
+                    <div class="movie-poster">
+                        <img id="moviePoster" src="" alt="Movie Poster">
+                    </div>
+                    <div class="movie-details">
+                        <h3 id="movieTitle"></h3>
+                        <div class="movie-meta">
+                            <span id="movieDuration"></span> | 
+                            <span id="movieGenre"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="date">Date *</label>
+                            <input type="date" id="date" name="date" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="time">Time *</label>
+                            <input type="time" id="time" name="time" class="form-input" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="hall">Hall *</label>
+                            <select id="hall" name="hall" class="form-select" required>
+                                <option value="">-- Select hall --</option>
+                                <option value="Screen 1 - IMAX">Screen 1 - IMAX</option>
+                                <option value="Screen 2 - Dolby Atmos">Screen 2 - Dolby Atmos</option>
+                                <option value="Screen 3">Screen 3</option>
+                                <option value="Screen 4 - 4DX">Screen 4 - 4DX</option>
+                                <option value="Screen 5 - 3D">Screen 5 - 3D</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="format">Format *</label>
+                            <select id="format" name="format" class="form-select" required>
+                                <option value="">-- Select format --</option>
+                                <option value="2D">2D</option>
+                                <option value="3D">3D</option>
+                                <option value="IMAX">IMAX</option>
+                                <option value="4DX">4DX</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="price">Ticket Price (Rs) *</label>
+                            <input type="number" id="price" name="price" class="form-input" required min="1" step="0.01">
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label class="form-label" for="available">Available Seats *</label>
+                            <input type="number" id="available" name="available" class="form-input" required min="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <a href="/admin" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Add Showtime</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Set minimum date to today
+        const today = new Date();
+        const dateInput = document.getElementById('date');
+        dateInput.min = today.toISOString().split('T')[0];
+        dateInput.value = today.toISOString().split('T')[0];
+        
+        // Movie selection logic
+        const movieSelect = document.getElementById('movie_id');
+        const movieDetails = document.getElementById('movieDetails');
+        const moviePoster = document.getElementById('moviePoster');
+        const movieTitle = document.getElementById('movieTitle');
+        const movieDuration = document.getElementById('movieDuration');
+        const movieGenre = document.getElementById('movieGenre');
+        
+        // Movie data from the server
+        const movies = {
+            {{range .Movies}}
+            "{{.ID}}": {
+                "title": "{{.Title}}",
+                "duration": {{.Duration}},
+                "genre": "{{.Genre}}",
+                "poster": "{{if .PosterURL.Valid}}{{.PosterURL.String}}{{else}}{{end}}"
+            },
+            {{end}}
+        };
+        
+        movieSelect.addEventListener('change', function() {
+            const movieId = this.value;
+            if (movieId && movies[movieId]) {
+                const movie = movies[movieId];
+                movieTitle.textContent = movie.title;
+                movieDuration.textContent = `${movie.duration} min`;
+                movieGenre.textContent = movie.genre || 'N/A';
+                
+                if (movie.poster) {
+                    moviePoster.src = movie.poster;
+                    moviePoster.alt = movie.title;
+                } else {
+                    moviePoster.src = '';
+                    moviePoster.alt = 'No Poster';
+                }
+                
+                movieDetails.style.display = 'flex';
+            } else {
+                movieDetails.style.display = 'none';
+            }
+        });
+        
+        // Set available seats based on hall selection
+        const hallSelect = document.getElementById('hall');
+        const availableInput = document.getElementById('available');
+        
+        hallSelect.addEventListener('change', function() {
+            const hall = this.value;
+            if (hall.includes('IMAX')) {
+                availableInput.value = 250;
+            } else if (hall.includes('4DX')) {
+                availableInput.value = 120;
+            } else if (hall.includes('3D')) {
+                availableInput.value = 180;
+            } else {
+                availableInput.value = 200;
+            }
+        });
+        
+        // Set price based on format
+        const formatSelect = document.getElementById('format');
+        const priceInput = document.getElementById('price');
+        
+        formatSelect.addEventListener('change', function() {
+            const format = this.value;
+            if (format === 'IMAX') {
+                priceInput.value = 450;
+            } else if (format === '4DX') {
+                priceInput.value = 500;
+            } else if (format === '3D') {
+                priceInput.value = 350;
+            } else {
+                priceInput.value = 250;
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - CineBook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary: #f84464;
+            --secondary: #222;
+            --background: #0f0f0f;
+            --text: #fff;
+            --text-secondary: #aaa;
+            --card-bg: #222;
+            --card-hover: #2a2a2a;
+            --confirmed: #4ade80;
+            --cancelled: #f43f5e;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: rgba(17, 17, 17, 0.95);
+            padding: 15px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo::before {
+            content: "";
+            display: inline-block;
+            width: 10px;
+            height: 24px;
+            background: var(--primary);
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            opacity: 0.8;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 100px 20px 40px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 15px;
+            display: inline-block;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 70px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .bookings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .booking-card {
+            background: rgba(34, 34, 34, 0.5);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            height: 100%;
+        }
+
+        .booking-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 220px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .booking-card:hover .movie-poster img {
+            transform: scale(1.05);
+        }
+
+        .booking-status {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(5px);
+        }
+
+        .status-confirmed {
+            background-color: rgba(74, 222, 128, 0.2);
+            color: var(--confirmed);
+            border: 1px solid var(--confirmed);
+        }
+
+        .status-cancelled {
+            background-color: rgba(244, 63, 94, 0.2);
+            color: var(--cancelled);
+            border: 1px solid var(--cancelled);
+        }
+
+        .booking-info {
+            padding: 25px;
+        }
+
+        .movie-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .booking-meta {
+            margin-bottom: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .meta-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .meta-label {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .seats-list {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .seats-label {
+            font-size: 14px;
+            color: var(--text);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .seats-numbers {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .total-price {
+            font-size: 20px;
+            font-weight: 600;
+            text-align: right;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: var(--primary);
+        }
+
+        .no-bookings {
+            text-align: center;
+            padding: 80px 30px;
+            background: rgba(34, 34, 34, 0.5);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .no-bookings h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+
+        .no-bookings p {
+            font-size: 16px;
+            margin-bottom: 30px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .browse-movies {
+            display: inline-block;
+            padding: 14px 36px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(248, 68, 100, 0.3);
+        }
+
+        .browse-movies:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(248, 68, 100, 0.4);
+        }
+
+        .no-poster {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #303030 0%, #1a1a1a 100%);
+            color: #555;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .bookings-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                gap: 20px;
+            }
+            
+            .page-title {
+                font-size: 28px;
+            }
+            
+            .movie-title {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 24px;
+                margin-bottom: 30px;
+            }
+            
+            .booking-info {
+                padding: 20px;
+            }
+            
+            .bookings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="/" class="logo">CineBook</a>
+            <div class="nav-links">
+                <a href="/movies">Movies</a>
+                <a href="/bookings">My Bookings</a>
+                <a href="/admin">Admin</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <h1 class="page-title">My Bookings</h1>
+
+        {{if .Bookings}}
+        <div class="bookings-grid">
+            {{range .Bookings}}
+            <div class="booking-card">
+                <div class="movie-poster">
+                    {{if .Showtime.Movie.PosterURL.Valid}}
+                    <img src="{{.Showtime.Movie.PosterURL.String}}" alt="{{.Showtime.Movie.Title}}">
+                    {{else}}
+                    <div class="no-poster">No Poster</div>
+                    {{end}}
+                    <div class="booking-status status-{{.Status}}">{{.Status}}</div>
+                </div>
+                <div class="booking-info">
+                    <h2 class="movie-title">{{.Showtime.Movie.Title}}</h2>
+                    <div class="booking-meta">
+                        <div class="meta-row">
+                            <span class="meta-label">Date & Time:</span>
+                            <span>{{.Showtime.DateTime.Format "Jan 02, 2006 3:04 PM"}}</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">Venue:</span>
+                            <span>{{.Showtime.Theater}} - {{.Showtime.Screen}}</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">Booking ID:</span>
+                            <span>{{.ID}}</span>
+                        </div>
+                    </div>
+                    <div class="seats-list">
+                        <div class="seats-label">Seats</div>
+                        <div class="seats-numbers">{{.SeatLabels}}</div>
+                    </div>
+                    <div class="total-price">₹{{.TotalPrice}}</div>
+                </div>
+            </div>
+            {{end}}
+        </div>
+        {{else}}
+        <div class="no-bookings">
+            <h2>No Bookings Found</h2>
+            <p>You haven't made any bookings yet. Browse our collection of movies and book your tickets now!</p>
+            <a href="/movies" class="browse-movies">Browse Movies</a>
+        </div>
+        {{end}}
+    </main>
+</body>
+</html> 
